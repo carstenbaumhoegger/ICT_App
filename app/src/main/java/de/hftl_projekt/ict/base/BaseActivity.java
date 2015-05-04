@@ -17,6 +17,11 @@ public abstract class BaseActivity extends AppCompatActivity {
 
     @InjectView(R.id.toolbar) Toolbar mToolbar;
 
+    /**
+     * set the contentView
+     * inject and set Toolbar
+     * @param savedInstanceState
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -26,7 +31,7 @@ public abstract class BaseActivity extends AppCompatActivity {
     }
 
     /**
-     * close the connections
+     * reset Butterknife
      */
     @Override
     protected void onDestroy() {

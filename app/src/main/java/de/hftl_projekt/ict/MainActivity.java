@@ -70,7 +70,7 @@ public class MainActivity extends BaseActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
 
-        if (id == R.id.action_settings) {
+        if(id == R.id.action_settings) {
             //todo show settings fragment
             return true;
         }
