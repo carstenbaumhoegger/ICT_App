@@ -72,6 +72,7 @@ public class MainActivity extends BaseActivity {
         int id = item.getItemId();
 
         if(id == R.id.action_settings) {
+            //start SettingsActivity
             Intent i_settings = new Intent(this, SettingsActivity.class);
             startActivity(i_settings);
             return true;
