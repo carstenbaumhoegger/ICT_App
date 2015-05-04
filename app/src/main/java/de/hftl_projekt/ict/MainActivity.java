@@ -1,5 +1,6 @@
 package de.hftl_projekt.ict;
 
+import android.content.Intent;
 import android.hardware.Camera;
 import android.os.Bundle;
 import android.util.Log;
@@ -71,7 +72,8 @@ public class MainActivity extends BaseActivity {
         int id = item.getItemId();
 
         if(id == R.id.action_settings) {
-            //todo show settings fragment
+            Intent i_settings = new Intent(this, SettingsActivity.class);
+            startActivity(i_settings);
             return true;
         }
         return super.onOptionsItemSelected(item);
