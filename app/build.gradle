@@ -24,4 +24,6 @@ dependencies {
     compile 'com.android.support:appcompat-v7:22.1.1'
     //OpenCV
     compile project(':opencv')
+    //Jake Wharton's Butterknife for ViewInjection
+    compile 'com.jakewharton:butterknife:6.1.0'
 }
