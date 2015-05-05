@@ -9,6 +9,7 @@ import android.view.MenuItem;
 import android.widget.FrameLayout;
 
 import butterknife.InjectView;
+import butterknife.OnClick;
 import de.hftl_projekt.ict.base.BaseActivity;
 
 
@@ -51,6 +52,13 @@ public class MainActivity extends BaseActivity {
             mCamera.release();
             mCamera = null;
         }
+    }
+
+    /**
+     * get's called on capture screen button click
+     */
+    @OnClick(R.id.btn_capture_screen) void captureScreen() {
+        Log.w(TAG, "captureScreen!");
     }
 
     @Override

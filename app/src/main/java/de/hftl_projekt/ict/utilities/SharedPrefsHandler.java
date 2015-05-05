@@ -25,7 +25,7 @@ public class SharedPrefsHandler {
      * @return instance
      */
     public static SharedPrefsHandler getInstance(Context pContext){
-        Log.d(TAG, "get SharedPrefsHandler instance!");
+		Log.d(TAG, "get SharedPrefsHandler instance!");
         if(mInstance == null){
             mInstance = new SharedPrefsHandler(pContext);
         }
