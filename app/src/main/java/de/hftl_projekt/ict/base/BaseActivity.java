@@ -20,7 +20,7 @@ public abstract class BaseActivity extends AppCompatActivity {
     /**
      * set the contentView
      * inject and set Toolbar
-     * @param savedInstanceState
+     * @param savedInstanceState savedInstanceState
      */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
