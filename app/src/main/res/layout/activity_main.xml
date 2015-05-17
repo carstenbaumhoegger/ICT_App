@@ -14,10 +14,12 @@
         android:layout_width="fill_parent"
         android:layout_height="fill_parent">
 
-        <FrameLayout
-            android:id="@+id/camera_preview"
-            android:layout_width="fill_parent"
-            android:layout_height="fill_parent" />
+        <org.opencv.android.JavaCameraView
+            android:id="@+id/camera_view"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:adjustViewBounds="true"
+            android:gravity="center_vertical" />
 
         <ImageButton
             android:id="@+id/btn_capture_screen"
