@@ -5,7 +5,7 @@ package de.hftl_projekt.ict.utilities;
  * @author Carsten
  * @since 13.05.2015
  */
-public class PictureFunctions {
+public class PictureHandler {
 
     /**
      * todo
