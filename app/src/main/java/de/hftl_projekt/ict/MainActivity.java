@@ -34,12 +34,12 @@ import butterknife.InjectView;
 import butterknife.OnClick;
 import de.hftl_projekt.ict.base.BaseActivity;
 
-
 public class MainActivity extends BaseActivity implements CameraBridgeViewBase.CvCameraViewListener {
     public static final String TAG = "MainActivity";
 
     /** opencv camera view class */
-    @InjectView(R.id.camera_view) JavaCameraView mOpenCvCameraView;
+    @InjectView(R.id.camera_view)
+    JavaCameraView mOpenCvCameraView;
 
     private boolean bShootNow = false, bDisplayTitle = true;
 
@@ -55,8 +55,7 @@ public class MainActivity extends BaseActivity implements CameraBridgeViewBase.C
     private long lFrameCount = 0, lMilliStart = 0, lMilliNow = 0, lMilliShotTime = 0;
 
     private Mat mRgba, mGray, mIntermediateMat, mMatRed, mMatGreen, mMatBlue, mROIMat,
-            mMatRedInv, mMatGreenInv, mMatBlueInv, mHSVMat, mErodeKernel, mContours,
-            lines;
+            mMatRedInv, mMatGreenInv, mMatBlueInv, mHSVMat, mErodeKernel, mContours, lines;
 
     private MatOfRect faces;
     private MatOfPoint2f mMOP2f1, mMOP2f2;
@@ -72,7 +71,6 @@ public class MainActivity extends BaseActivity implements CameraBridgeViewBase.C
         super.onCreate(savedInstanceState);
 
         mOpenCvCameraView.setCvCameraViewListener(this);
-
     }
 
     /**
@@ -216,7 +214,7 @@ public class MainActivity extends BaseActivity implements CameraBridgeViewBase.C
         sMatSize.height = mRgba.height();
 
         if (bDisplayTitle) {
-            ShowTitle("RGBA Preview", 1, colorGreen);
+            showTitle("RGBA Preview", 1, colorGreen);
         }
 
         // get the time now in every frame
@@ -228,7 +226,7 @@ public class MainActivity extends BaseActivity implements CameraBridgeViewBase.C
         if (bDisplayTitle) {
             string = String.format("FPS: %2.1f", (float)(lFrameCount * 1000) / (float)(lMilliNow - lMilliStart));
 
-            ShowTitle (string, 2, colorGreen);
+            showTitle(string, 2, colorGreen);
         }
 
         if (bShootNow) {
@@ -248,7 +246,7 @@ public class MainActivity extends BaseActivity implements CameraBridgeViewBase.C
         }
 
         if (System.currentTimeMillis() - lMilliShotTime < 1500)
-            ShowTitle (sShotText, 3, colorRed);
+            showTitle(sShotText, 3, colorRed);
 
         return mRgba;
     }
@@ -280,7 +278,7 @@ public class MainActivity extends BaseActivity implements CameraBridgeViewBase.C
         return bool;
     }
 
-    private void ShowTitle (String s, int iLineNum, Scalar color) {
+    private void showTitle(String s, int iLineNum, Scalar color) {
         Core.putText(mRgba, s, new Point(10, (int)(dTextScaleFactor * 60 * iLineNum)),
                 Core.FONT_HERSHEY_SIMPLEX, dTextScaleFactor, color, 2);
     }
