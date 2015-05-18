@@ -10,15 +10,16 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 
+import org.opencv.android.BaseLoaderCallback;
 import org.opencv.android.CameraBridgeViewBase;
 import org.opencv.android.JavaCameraView;
-import org.opencv.core.Core;
+import org.opencv.android.LoaderCallbackInterface;
+import org.opencv.android.OpenCVLoader;
 import org.opencv.core.CvType;
 import org.opencv.core.Mat;
 import org.opencv.core.MatOfPoint;
 import org.opencv.core.MatOfPoint2f;
 import org.opencv.core.MatOfRect;
-import org.opencv.core.Point;
 import org.opencv.core.Scalar;
 import org.opencv.core.Size;
 import org.opencv.highgui.Highgui;
@@ -34,7 +35,7 @@ import butterknife.InjectView;
 import butterknife.OnClick;
 import de.hftl_projekt.ict.base.BaseActivity;
 
-public class MainActivity extends BaseActivity implements CameraBridgeViewBase.CvCameraViewListener {
+public class MainActivity extends BaseActivity implements CameraBridgeViewBase.CvCameraViewListener2 {
     public static final String TAG = "MainActivity";
 
     /** opencv camera view class */
@@ -47,11 +48,10 @@ public class MainActivity extends BaseActivity implements CameraBridgeViewBase.C
 
     private double dTextScaleFactor;
 
-    private int  iFileOrdinal = 0;
-
     private List<Integer> iHueMap, channels;
     private List<Float> ranges;
 
+    //used to calculate the fps
     private long lFrameCount = 0, lMilliStart = 0, lMilliNow = 0, lMilliShotTime = 0;
 
     private Mat mRgba, mGray, mIntermediateMat, mMatRed, mMatGreen, mMatBlue, mROIMat,
@@ -71,6 +71,12 @@ public class MainActivity extends BaseActivity implements CameraBridgeViewBase.C
         super.onCreate(savedInstanceState);
 
         mOpenCvCameraView.setCvCameraViewListener(this);
+    }
+
+    public void onResume() {
+        super.onResume();
+        //init OpenCV
+        OpenCVLoader.initAsync(OpenCVLoader.OPENCV_VERSION_2_4_11, this, mLoaderCallback);
     }
 
     /**
@@ -114,6 +120,7 @@ public class MainActivity extends BaseActivity implements CameraBridgeViewBase.C
 
     @Override
     public void onCameraViewStarted(int width, int height) {
+        Log.w(TAG, "Camera res: " + width + " * " + height);
         byteColourTrackCentreHue = new byte[3];
         // green = 60 // mid yellow  27
         byteColourTrackCentreHue[0] = 27;
@@ -164,11 +171,19 @@ public class MainActivity extends BaseActivity implements CameraBridgeViewBase.C
 
         mRgba = new Mat(height, width, CvType.CV_8UC4);
         mIntermediateMat = new Mat(height, width, CvType.CV_8UC4);
+
+        Log.w(TAG, "onCameraViewStarted");
     }
 
     @Override
     public void onCameraViewStopped() {
         releaseMats();
+    }
+
+    @Override
+    public Mat onCameraFrame(CameraBridgeViewBase.CvCameraViewFrame inputFrame) {
+        Log.w(TAG, "onCameraFrame!");
+        return null;
     }
 
     public void releaseMats () {
@@ -191,10 +206,9 @@ public class MainActivity extends BaseActivity implements CameraBridgeViewBase.C
         mMOP2f1.release();
         mMOP2f2.release();
         mApproxContour.release();
-
     }
 
-    @Override
+    //@Override
     public Mat onCameraFrame(Mat inputFrame) {
         mErodeKernel = Imgproc.getStructuringElement(Imgproc.MORPH_CROSS, sSize3);
 
@@ -213,21 +227,26 @@ public class MainActivity extends BaseActivity implements CameraBridgeViewBase.C
         sMatSize.width = mRgba.width();
         sMatSize.height = mRgba.height();
 
+        /*
         if (bDisplayTitle) {
             showTitle("RGBA Preview", 1, colorGreen);
         }
+        */
 
         // get the time now in every frame
         lMilliNow = System.currentTimeMillis();
 
-        // update the frame counter
+        // increment the frame counter
         lFrameCount++;
 
+        /*
         if (bDisplayTitle) {
+            //calculate the fps
             string = String.format("FPS: %2.1f", (float)(lFrameCount * 1000) / (float)(lMilliNow - lMilliStart));
 
-            showTitle(string, 2, colorGreen);
+            //showTitle(string, 2, colorGreen);
         }
+        */
 
         if (bShootNow) {
             // get the time of the attempt to save a screenshot
@@ -245,41 +264,75 @@ public class MainActivity extends BaseActivity implements CameraBridgeViewBase.C
             }
         }
 
-        if (System.currentTimeMillis() - lMilliShotTime < 1500)
+        /*
+        if (System.currentTimeMillis() - lMilliShotTime < 1500) {
             showTitle(sShotText, 3, colorRed);
+        }
+        */
 
         return mRgba;
     }
 
+    /**
+     * captures a screenshot onTouch
+     * @param event
+     * @return
+     */
+    @Override
     public boolean onTouchEvent(final MotionEvent event) {
         Log.w(TAG, "onTouch!");
         bShootNow = true;
         return false;
     }
+
+    /**
+     * saves an Image to external storage
+     * @param pMat Mat to save
+     * @return saving succeeded or failed
+     */
     @SuppressLint("SimpleDateFormat")
-    public boolean saveImage(Mat mat) {
-        Imgproc.cvtColor(mat, mIntermediateMat, Imgproc.COLOR_RGBA2BGR, 3);
+    public boolean saveImage(Mat pMat) {
+        Imgproc.cvtColor(pMat, mIntermediateMat, Imgproc.COLOR_RGBA2BGR, 3);
 
         File path = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES);
 
-        String filename = "OpenCV_";
+        //build the filename
+        String filename = getString(R.string.app_name) + "_";
         SimpleDateFormat fmt = new SimpleDateFormat("yyyy-MM-dd_HH-mm-ss");
         Date date = new Date(System.currentTimeMillis());
         String dateString = fmt.format(date);
-        filename += dateString + "-" + iFileOrdinal;
+        filename += dateString;
         filename += ".png";
 
         File file = new File(path, filename);
-
-        Boolean bool;
         filename = file.toString();
-        bool = Highgui.imwrite(filename, mIntermediateMat);
-
-        return bool;
+        //try to write the image to storage
+        return Highgui.imwrite(filename, mIntermediateMat);
     }
-
+/*
     private void showTitle(String s, int iLineNum, Scalar color) {
         Core.putText(mRgba, s, new Point(10, (int)(dTextScaleFactor * 60 * iLineNum)),
                 Core.FONT_HERSHEY_SIMPLEX, dTextScaleFactor, color, 2);
     }
+    */
+
+    /**
+     * callback that checks if OpenCV is available
+     */
+    private BaseLoaderCallback mLoaderCallback = new BaseLoaderCallback(this) {
+        @Override
+        public void onManagerConnected(int status) {
+            switch (status) {
+                case LoaderCallbackInterface.SUCCESS:
+                {
+                    Log.i(TAG, "OpenCV loaded successfully");
+                    mOpenCvCameraView.enableView();
+                } break;
+                default:
+                {
+                    super.onManagerConnected(status);
+                } break;
+            }
+        }
+    };
 }
