@@ -10,6 +10,8 @@ import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.widget.Toast;
 
+import com.mikepenz.aboutlibraries.Libs;
+
 import org.opencv.android.BaseLoaderCallback;
 import org.opencv.android.CameraBridgeViewBase;
 import org.opencv.android.JavaCameraView;
@@ -85,21 +87,44 @@ public class MainActivity extends AppCompatActivity implements CameraBridgeViewB
         }
     }
 
+    /**
+     * gets called on chose quantization button klick
+     */
     @OnClick(R.id.btn_quantization) void chooseQuantization() {
         Log.w(TAG, "chose quantization!");
         buildQuantizationModeDialog();
     }
 
+    /**
+     * gets called on show app info button klick
+     */
     @OnClick(R.id.btn_show_app_info) void showAppInfo() {
-
+        //use AboutLibraries to display used libraries
+        //Todo list OpenCV, FAB
+        new Libs.Builder()
+                //Pass the fields of your application to the lib so it can find all external lib information
+                .withFields(R.string.class.getFields())
+                //provide a style (optional) (LIGHT, DARK, LIGHT_DARK_TOOLBAR)
+                .withActivityStyle(Libs.ActivityStyle.LIGHT)
+                //show the app name Todo show all collaborators
+                .withAboutAppName(getString(R.string.app_name))
+                //don't show the library version
+                .withVersionShown(false)
+                //show the app version
+                .withAboutVersionShown(true)
+                //show the app icon
+                .withAboutIconShown(true)
+                //start the activity
+                .start(this);
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
         ButterKnife.reset(this);
-        if (mOpenCvCameraView != null)
+        if (mOpenCvCameraView != null) {
             mOpenCvCameraView.disableView();
+        }
         Log.d(TAG, "onDestroy");
     }
 
