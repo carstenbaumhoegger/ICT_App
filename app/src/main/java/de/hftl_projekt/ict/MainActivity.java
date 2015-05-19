@@ -68,8 +68,7 @@ public class MainActivity extends AppCompatActivity implements CameraBridgeViewB
         //init OpenCV
         OpenCVLoader.initAsync(OpenCVLoader.OPENCV_VERSION_2_4_9, this, mLoaderCallback);
         //get the quantization mode
-        quantizationMode = Integer.parseInt(SharedPrefsHandler.getInstance(this).
-                loadStringSettings(KEY_QUANTIZATION_MODE));
+        quantizationMode = SharedPrefsHandler.getInstance(this).loadIntSettings(KEY_QUANTIZATION_MODE);
     }
 
     /**
@@ -114,28 +113,48 @@ public class MainActivity extends AppCompatActivity implements CameraBridgeViewB
     @Override
     public Mat onCameraFrame(CameraBridgeViewBase.CvCameraViewFrame inputFrame) {
         Log.d(TAG, "camera frame");
-        mCurrentMat = getQuantizisedImage(inputFrame.rgba());
+        mCurrentMat = getQuantizisedImage(inputFrame);
         return mCurrentMat;
     }
 
     /**
      * quantizises the image based on chosen quantization mode
-     * @param pInputMat input image from camera
+     * @param pInputFrame input image from camera
      * @return mat
      */
-    public Mat getQuantizisedImage(Mat pInputMat) {
+    public Mat getQuantizisedImage(CameraBridgeViewBase.CvCameraViewFrame pInputFrame) {
         switch (quantizationMode) {
             case QUANTIZATION_MODE_NONE:
                 //just return camera picture if no quantization is chosen
-                return pInputMat;
+                return pInputFrame.rgba();
             case QUANTIZATION_MODE_BRIGHTNESS:
                 //TODO!
-                return pInputMat;
+                return reduceColors(pInputFrame.rgba(), 64);
+                //return pInputMat;
+                //break;
             case QUANTIATION_MODE_COLOR:
-                //TODO!
-                return pInputMat;
+                //TODO???? :D
+                return pInputFrame.gray();
         }
-        return pInputMat;
+        return pInputFrame.rgba();
+    }
+
+    public Mat reduceColors(Mat image, int div) {
+        int nl = image.rows();
+        int nc = image.cols();// * image.channels();
+
+
+        for (int j = 0; j < nl - 1; j++) {
+            for (int i = 0; i < nc - 1; i++) {
+                double[] pixel = image.get(j, i);
+                pixel[0] = pixel[0] / div * div + div / 2;
+                pixel[1] = pixel[1] / div * div + div / 2;
+                pixel[2] = pixel[2] / div * div + div / 2;
+                image.put(j, i, pixel);
+            }
+        }
+
+        return image;
     }
 
     /**
