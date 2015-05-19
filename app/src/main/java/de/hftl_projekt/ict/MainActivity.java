@@ -33,8 +33,7 @@ public class MainActivity extends AppCompatActivity implements CameraBridgeViewB
     private Context mContext;
 
     /** opencv camera view class */
-    @InjectView(R.id.camera_view)
-    JavaCameraView mOpenCvCameraView;
+    @InjectView(R.id.camera_view) JavaCameraView mOpenCvCameraView;
 
     /** quantization mode chosen by user */
     private int quantizationMode = 0;
@@ -44,12 +43,13 @@ public class MainActivity extends AppCompatActivity implements CameraBridgeViewB
 
     private static final int QUANTIZATION_MODE_NONE = 0;
     private static final int QUANTIZATION_MODE_BRIGHTNESS = 1;
-    private static final int QUANTIATION_MODE_COLOR = 2;
+    private static final int QUANTIZATION_MODE_COLOR = 2;
 
     private static final String QUANTIZATION_MODE_NONE_STRING = "Keins";
     private static final String QUANTIZATION_MODE_BRIGHTNESS_STRING = "Helligkeit";
     private static final String QUANTIZATION_MODE_COLOR_STRING = "Farbwerte";
 
+    /** key for SharedPreferences */
     private static final String KEY_QUANTIZATION_MODE = "quantization_mode";
 
     @Override
@@ -88,6 +88,10 @@ public class MainActivity extends AppCompatActivity implements CameraBridgeViewB
     @OnClick(R.id.btn_quantization) void chooseQuantization() {
         Log.w(TAG, "chose quantization!");
         buildQuantizationModeDialog();
+    }
+
+    @OnClick(R.id.btn_show_app_info) void showAppInfo() {
+
     }
 
     @Override
@@ -132,7 +136,7 @@ public class MainActivity extends AppCompatActivity implements CameraBridgeViewB
                 return reduceColors(pInputFrame.rgba(), 64);
                 //return pInputMat;
                 //break;
-            case QUANTIATION_MODE_COLOR:
+            case QUANTIZATION_MODE_COLOR:
                 //TODO???? :D
                 return pInputFrame.gray();
         }
@@ -164,7 +168,7 @@ public class MainActivity extends AppCompatActivity implements CameraBridgeViewB
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         final String[] choices = {QUANTIZATION_MODE_NONE_STRING, QUANTIZATION_MODE_BRIGHTNESS_STRING,
                 QUANTIZATION_MODE_COLOR_STRING};
-        builder.setTitle("Quantisierungsverfahren");
+        builder.setTitle(getString(R.string.quantization_list_title));
         builder.setSingleChoiceItems(choices, quantizationMode, new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int item) {
                 //save the chosen quantization mode

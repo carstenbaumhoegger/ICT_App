@@ -13,6 +13,18 @@
         android:gravity="center_vertical" />
 
     <com.getbase.floatingactionbutton.FloatingActionButton
+        android:id="@+id/btn_show_app_info"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        fab:fab_colorNormal="@color/primary"
+        fab:fab_colorPressed="@color/primary_dark"
+        fab:fab_size="mini"
+        fab:fab_icon="@mipmap/ic_info_white"/>
+
+    <com.getbase.floatingactionbutton.FloatingActionButton
         android:id="@+id/btn_capture_screen"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
