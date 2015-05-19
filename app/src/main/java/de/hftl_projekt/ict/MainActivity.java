@@ -2,8 +2,11 @@ package de.hftl_projekt.ict;
 
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
+import android.content.Context;
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.os.Environment;
+import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -19,13 +22,15 @@ import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
+import butterknife.ButterKnife;
 import butterknife.InjectView;
 import butterknife.OnClick;
-import de.hftl_projekt.ict.base.BaseActivity;
 import de.hftl_projekt.ict.utilities.SharedPrefsHandler;
 
-public class MainActivity extends BaseActivity implements CameraBridgeViewBase.CvCameraViewListener2 {
+public class MainActivity extends AppCompatActivity implements CameraBridgeViewBase.CvCameraViewListener2 {
     public static final String TAG = "MainActivity";
+
+    private Context mContext;
 
     /** opencv camera view class */
     @InjectView(R.id.camera_view)
@@ -50,6 +55,10 @@ public class MainActivity extends BaseActivity implements CameraBridgeViewBase.C
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+        ButterKnife.inject(this);
+
+        mContext = this;
 
         mOpenCvCameraView.setCvCameraViewListener(this);
     }
@@ -85,6 +94,7 @@ public class MainActivity extends BaseActivity implements CameraBridgeViewBase.C
     @Override
     protected void onDestroy() {
         super.onDestroy();
+        ButterKnife.reset(this);
         if (mOpenCvCameraView != null)
             mOpenCvCameraView.disableView();
         Log.d(TAG, "onDestroy");
@@ -114,8 +124,6 @@ public class MainActivity extends BaseActivity implements CameraBridgeViewBase.C
      * @return mat
      */
     public Mat getQuantizisedImage(Mat pInputMat) {
-        Log.d(TAG, "inputMatSize: " + pInputMat.size());
-
         switch (quantizationMode) {
             case QUANTIZATION_MODE_NONE:
                 //just return camera picture if no quantization is chosen
@@ -135,11 +143,18 @@ public class MainActivity extends BaseActivity implements CameraBridgeViewBase.C
      */
     private void buildQuantizationModeDialog() {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        String[] choices = {QUANTIZATION_MODE_NONE_STRING, QUANTIZATION_MODE_BRIGHTNESS_STRING,
+        final String[] choices = {QUANTIZATION_MODE_NONE_STRING, QUANTIZATION_MODE_BRIGHTNESS_STRING,
                 QUANTIZATION_MODE_COLOR_STRING};
-        builder.setSingleChoiceItems(choices, 0, null);
-        builder.setPositiveButton("Select", null);
-        builder.setNegativeButton("Cancel", null);
+        builder.setTitle("Quantisierungsverfahren");
+        builder.setSingleChoiceItems(choices, quantizationMode, new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int item) {
+                //save the chosen quantization mode
+                SharedPrefsHandler.getInstance(mContext).saveIntSettings(KEY_QUANTIZATION_MODE, item);
+                quantizationMode = item;
+            }
+        });
+        builder.setPositiveButton("Auswählen", null);
+        builder.setNegativeButton("Abbrechen", null);
         builder.show();
     }
 
@@ -186,9 +201,4 @@ public class MainActivity extends BaseActivity implements CameraBridgeViewBase.C
             }
         }
     };
-
-    @Override
-    protected int getLayoutResourceId() {
-        return R.layout.activity_main;
-    }
 }
