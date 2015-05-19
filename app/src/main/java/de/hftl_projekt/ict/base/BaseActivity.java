@@ -13,7 +13,6 @@ import de.hftl_projekt.ict.R;
  * @author Carsten
  */
 public abstract class BaseActivity extends AppCompatActivity {
-    private static final String TAG = "BaseActivity";
 
     @InjectView(R.id.toolbar) Toolbar mToolbar;
 
@@ -39,5 +38,9 @@ public abstract class BaseActivity extends AppCompatActivity {
         ButterKnife.reset(this);
     }
 
+    /**
+     * get the layout from all activities that extend BaseActivity
+     * @return layout resource id
+     */
     protected abstract int getLayoutResourceId();
 }
