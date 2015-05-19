@@ -1,34 +1,36 @@
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:fab="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/relativeLayout"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
-    android:baselineAligned="false"
     android:keepScreenOn="true">
 
-    <include
-        android:id="@+id/toolbar"
-        layout="@layout/toolbar">
-    </include>
+    <org.opencv.android.JavaCameraView
+        android:id="@+id/camera_view"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:adjustViewBounds="true"
+        android:gravity="center_vertical" />
 
-    <RelativeLayout
-        android:id="@+id/relativeLayout"
-        android:layout_width="fill_parent"
-        android:layout_height="fill_parent">
+    <com.getbase.floatingactionbutton.FloatingActionButton
+        android:id="@+id/btn_capture_screen"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        fab:fab_colorNormal="@color/primary"
+        fab:fab_colorPressed="@color/primary_dark"
+        fab:fab_icon="@mipmap/ic_camera_white"/>
 
-        <org.opencv.android.JavaCameraView
-            android:id="@+id/camera_view"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:adjustViewBounds="true"
-            android:gravity="center_vertical" />
-
-        <ImageButton
-            android:id="@+id/btn_capture_screen"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentBottom="true"
-            android:layout_centerHorizontal="true"
-            android:tint="@color/primary"
-            android:src="@mipmap/ic_camera_white" />
-    </RelativeLayout>
-</LinearLayout>
+    <com.getbase.floatingactionbutton.FloatingActionButton
+        android:id="@+id/btn_quantization"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true"
+        fab:fab_colorNormal="@color/primary"
+        fab:fab_colorPressed="@color/primary_dark"
+        fab:fab_size="mini"
+        fab:fab_icon="@mipmap/ic_settings_white"/>
+</RelativeLayout>

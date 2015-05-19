@@ -1,12 +1,10 @@
 package de.hftl_projekt.ict;
 
 import android.annotation.SuppressLint;
-import android.content.Intent;
+import android.app.AlertDialog;
 import android.os.Bundle;
 import android.os.Environment;
 import android.util.Log;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.widget.Toast;
 
 import org.opencv.android.BaseLoaderCallback;
@@ -43,6 +41,12 @@ public class MainActivity extends BaseActivity implements CameraBridgeViewBase.C
     private static final int QUANTIZATION_MODE_BRIGHTNESS = 1;
     private static final int QUANTIATION_MODE_COLOR = 2;
 
+    private static final String QUANTIZATION_MODE_NONE_STRING = "Keins";
+    private static final String QUANTIZATION_MODE_BRIGHTNESS_STRING = "Helligkeit";
+    private static final String QUANTIZATION_MODE_COLOR_STRING = "Farbwerte";
+
+    private static final String KEY_QUANTIZATION_MODE = "quantization_mode";
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -56,11 +60,11 @@ public class MainActivity extends BaseActivity implements CameraBridgeViewBase.C
         OpenCVLoader.initAsync(OpenCVLoader.OPENCV_VERSION_2_4_9, this, mLoaderCallback);
         //get the quantization mode
         quantizationMode = Integer.parseInt(SharedPrefsHandler.getInstance(this).
-                loadStringSettings(getString(R.string.KEY_QUANTIZATION_MODE)));
+                loadStringSettings(KEY_QUANTIZATION_MODE));
     }
 
     /**
-     * get's called on capture screen button click
+     * gets called on capture screen button click
      */
     @OnClick(R.id.btn_capture_screen) void captureScreen() {
         Log.w(TAG, "captureScreen!");
@@ -71,6 +75,11 @@ public class MainActivity extends BaseActivity implements CameraBridgeViewBase.C
             Log.e(TAG, "error while saving image!");
             Toast.makeText(this, "Fehler während Bildschirmaufnahme", Toast.LENGTH_LONG).show();
         }
+    }
+
+    @OnClick(R.id.btn_quantization) void chooseQuantization() {
+        Log.w(TAG, "chose quantization!");
+        buildQuantizationModeDialog();
     }
 
     @Override
@@ -89,6 +98,7 @@ public class MainActivity extends BaseActivity implements CameraBridgeViewBase.C
 
     @Override
     public void onCameraViewStopped() {
+        Log.w(TAG, "onCameraViewStopped");
     }
 
     @Override
@@ -118,6 +128,19 @@ public class MainActivity extends BaseActivity implements CameraBridgeViewBase.C
                 return pInputMat;
         }
         return pInputMat;
+    }
+
+    /**
+     * builds the dialog to chose QuantizationMode
+     */
+    private void buildQuantizationModeDialog() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        String[] choices = {QUANTIZATION_MODE_NONE_STRING, QUANTIZATION_MODE_BRIGHTNESS_STRING,
+                QUANTIZATION_MODE_COLOR_STRING};
+        builder.setSingleChoiceItems(choices, 0, null);
+        builder.setPositiveButton("Select", null);
+        builder.setNegativeButton("Cancel", null);
+        builder.show();
     }
 
     /**
@@ -163,25 +186,6 @@ public class MainActivity extends BaseActivity implements CameraBridgeViewBase.C
             }
         }
     };
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.menu_main, menu);
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        int id = item.getItemId();
-
-        if(id == R.id.action_settings) {
-            //start SettingsActivity
-            Intent i_settings = new Intent(this, SettingsActivity.class);
-            startActivity(i_settings);
-            return true;
-        }
-        return super.onOptionsItemSelected(item);
-    }
 
     @Override
     protected int getLayoutResourceId() {
