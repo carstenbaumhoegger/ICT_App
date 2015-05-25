@@ -157,24 +157,54 @@ public class MainActivity extends AppCompatActivity implements CameraBridgeViewB
                 //just return camera picture if no quantization is chosen
                 return pInputFrame.rgba();
             case QUANTIZATION_MODE_BRIGHTNESS:
-                //TODO!
-                return reduceColors(pInputFrame.rgba(), 64);
-                //return pInputMat;
-                //break;
+                return changeBrightness(pInputFrame.rgba(), 0.9); // values which makes sense are around 0.5 to 1.5 (the higher the number, the brighter the picture will be)
             case QUANTIZATION_MODE_COLOR:
-                //TODO???? :D
-                return pInputFrame.gray();
+                return reduceColors(pInputFrame.rgba(), 192);
         }
         return pInputFrame.rgba();
     }
 
-    public Mat reduceColors(Mat image, int div) {
+    // currently not used
+    public double reduceVal(double val) {
+        if (val < 64) return 0;
+        if (val < 128) return 64;
+        return 255;
+    }
+
+    // ensure that the values stays in the rgb rang (0..255)
+    public long truncate(long val) {
+        if(val < 0 ) return 0;
+        if(val > 255) return 255;
+        return val;
+    }
+
+    public Mat changeBrightness(Mat image, double modifier) {
+
         int nl = image.rows();
         int nc = image.cols();// * image.channels();
 
 
-        for (int j = 0; j < nl - 1; j++) {
-            for (int i = 0; i < nc - 1; i++) {
+        for (int j = 0; j < nl; j++) {
+            for (int i = 0; i < nc; i++) {
+                double[] pixel = image.get(j, i);
+                pixel[0] = truncate(Math.round(pixel[0] * modifier));
+                pixel[1] = truncate(Math.round(pixel[1] * modifier));
+                pixel[2] = truncate(Math.round(pixel[2] * modifier));
+                image.put(j, i, pixel);
+            }
+        }
+
+        return image;
+    }
+
+    public Mat reduceColors(Mat image, double div) {
+
+        int nl = image.rows();
+        int nc = image.cols();// * image.channels();
+
+
+        for (int j = 0; j < nl; j++) {
+            for (int i = 0; i < nc; i++) {
                 double[] pixel = image.get(j, i);
                 pixel[0] = pixel[0] / div * div + div / 2;
                 pixel[1] = pixel[1] / div * div + div / 2;
