@@ -33,7 +33,6 @@ public class MainActivity extends AppCompatActivity implements CameraBridgeViewB
 
     /** opencv camera view class */
     @InjectView(R.id.camera_view)
-    //CameraView mOpenCvCameraView;
     JavaCameraView mOpenCvCameraView;
 
     /** quantization mode chosen by user */
@@ -57,8 +56,6 @@ public class MainActivity extends AppCompatActivity implements CameraBridgeViewB
         ButterKnife.inject(this);
 
         mOpenCvCameraView.setCvCameraViewListener(this);
-        //Log.w(TAG, "res list: " + mOpenCvCameraView.getResolutionList());
-        //mOpenCvCameraView.setResolution(640, 480);
     }
 
     public void onResume() {
@@ -100,15 +97,8 @@ public class MainActivity extends AppCompatActivity implements CameraBridgeViewB
                 .withFields(R.string.class.getFields())
                 //provide a style (optional) (LIGHT, DARK, LIGHT_DARK_TOOLBAR)
                 .withActivityStyle(Libs.ActivityStyle.LIGHT)
-                //show the app name Todo show all collaborators
-                .withAboutAppName(getString(R.string.app_name))
-                //don't show the library version
-                .withVersionShown(false)
-                //show the app version
-                .withAboutVersionShown(true)
-                //show the app icon
-                .withAboutIconShown(true)
-                //start the activity
+                //show the app license
+                .withLicenseShown(true)
                 .start(this);
     }
 

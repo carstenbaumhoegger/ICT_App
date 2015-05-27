@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="aboutLibraries_description_name">@string/app_name</string>
+    <string name="aboutLibraries_description_showIcon">true</string>
+    <string name="aboutLibraries_description_showVersion">true</string>
+    <string name="aboutLibraries_description_text">
+        <![CDATA[
+            Android App, entwickelt als PVL im Modul ICT.<br />
+            Mitwirkende: <br />
+            <b>Karolin Pflug, Kathrin Krumbach, Hava Yildiz, Jens K&uuml;per, Kurosh d\'Alba, Carsten Baumh&ouml;gger</b>
+        </b>]]>
+    </string>
+</resources>

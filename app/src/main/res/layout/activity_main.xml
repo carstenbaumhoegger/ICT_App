@@ -11,13 +11,6 @@
         android:layout_height="match_parent"
         android:adjustViewBounds="true"
         android:gravity="center_vertical" />
-<!--
-    <de.hftl_projekt.ict.CameraView
-        android:id="@+id/camera_view"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:adjustViewBounds="true"
-        android:gravity="center_vertical" /> -->
 
     <com.getbase.floatingactionbutton.FloatingActionButton
         android:id="@+id/btn_show_app_info"
