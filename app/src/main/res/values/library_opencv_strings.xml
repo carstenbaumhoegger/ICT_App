@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<resources>
+    <string name="define_int_opencv"></string>
+    <!-- Author section -->
+    <string name="library_opencv_author">itseez</string>
+    <string name="library_opencv_authorWebsite">http://itseez.com/</string>
+    <!-- Library section -->
+    <string name="library_opencv_libraryName">OpenCV</string>
+    <string name="library_opencv_libraryDescription">Open Source Computer Vision Library</string>
+    <string name="library_opencv_libraryWebsite">opencv.org</string>
+    <string name="library_opencv_libraryVersion">2.4.11</string>
+    <!-- OpenSource section -->
+    <string name="library_opencv_isOpenSource">true</string>
+    <string name="library_opencv_repositoryLink">https://github.com/Itseez/opencv</string>
+    <!-- ClassPath for autoDetect section -->
+    <string name="library_opencv_classPath"></string>
+    <!-- License section -->
+    <string name="library_opencv_licenseId">bsd_3</string>
+    <!-- Custom variables section -->
+</resources>

@@ -11,6 +11,7 @@ import android.util.Log;
 import android.widget.Toast;
 
 import com.mikepenz.aboutlibraries.Libs;
+import com.mikepenz.aboutlibraries.LibsBuilder;
 
 import org.opencv.android.BaseLoaderCallback;
 import org.opencv.android.CameraBridgeViewBase;
@@ -35,7 +36,9 @@ public class MainActivity extends AppCompatActivity implements CameraBridgeViewB
     private Context mContext;
 
     /** opencv camera view class */
-    @InjectView(R.id.camera_view) JavaCameraView mOpenCvCameraView;
+    @InjectView(R.id.camera_view)
+    //CameraView mOpenCvCameraView;
+    JavaCameraView mOpenCvCameraView;
 
     /** quantization mode chosen by user */
     private int quantizationMode = 0;
@@ -63,6 +66,8 @@ public class MainActivity extends AppCompatActivity implements CameraBridgeViewB
         mContext = this;
 
         mOpenCvCameraView.setCvCameraViewListener(this);
+        //Log.w(TAG, "res list: " + mOpenCvCameraView.getResolutionList());
+        //mOpenCvCameraView.setResolution(640, 480);
     }
 
     public void onResume() {
@@ -101,7 +106,7 @@ public class MainActivity extends AppCompatActivity implements CameraBridgeViewB
     @OnClick(R.id.btn_show_app_info) void showAppInfo() {
         //use AboutLibraries to display used libraries
         //Todo list OpenCV, FAB
-        new Libs.Builder()
+        new LibsBuilder()
                 //Pass the fields of your application to the lib so it can find all external lib information
                 .withFields(R.string.class.getFields())
                 //provide a style (optional) (LIGHT, DARK, LIGHT_DARK_TOOLBAR)
