@@ -11,7 +11,6 @@ import android.util.Log;
 import android.widget.Toast;
 
 import com.mikepenz.aboutlibraries.Libs;
-import com.mikepenz.aboutlibraries.LibsBuilder;
 
 import org.opencv.android.BaseLoaderCallback;
 import org.opencv.android.CameraBridgeViewBase;
@@ -19,7 +18,7 @@ import org.opencv.android.JavaCameraView;
 import org.opencv.android.LoaderCallbackInterface;
 import org.opencv.android.OpenCVLoader;
 import org.opencv.core.Mat;
-import org.opencv.imgcodecs.Imgcodecs;
+import org.opencv.highgui.Highgui;
 
 import java.io.File;
 import java.text.SimpleDateFormat;
@@ -102,7 +101,7 @@ public class MainActivity extends AppCompatActivity implements CameraBridgeViewB
     @OnClick(R.id.btn_show_app_info) void showAppInfo() {
         //use AboutLibraries to display used libraries
         //Todo list OpenCV, FAB
-        new LibsBuilder()
+        new Libs.Builder()
                 //Pass the fields of your application to the lib so it can find all external lib information
                 .withFields(R.string.class.getFields())
                 //provide a style (optional) (LIGHT, DARK, LIGHT_DARK_TOOLBAR)
@@ -258,7 +257,7 @@ public class MainActivity extends AppCompatActivity implements CameraBridgeViewB
         File file = new File(path, filename);
         filename = file.toString();
         //try to write the image to storage
-        return Imgcodecs.imwrite(filename, pMat);
+        return Highgui.imwrite(filename, pMat);
     }
 
     /**
