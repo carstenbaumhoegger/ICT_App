@@ -2,7 +2,6 @@ package de.hftl_projekt.ict;
 
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.os.Environment;
@@ -28,12 +27,9 @@ import java.util.Date;
 import butterknife.ButterKnife;
 import butterknife.InjectView;
 import butterknife.OnClick;
-import de.hftl_projekt.ict.utilities.SharedPrefsHandler;
 
 public class MainActivity extends AppCompatActivity implements CameraBridgeViewBase.CvCameraViewListener2 {
     public static final String TAG = "MainActivity";
-
-    private Context mContext;
 
     /** opencv camera view class */
     @InjectView(R.id.camera_view)
@@ -54,16 +50,11 @@ public class MainActivity extends AppCompatActivity implements CameraBridgeViewB
     private static final String QUANTIZATION_MODE_BRIGHTNESS_STRING = "Helligkeit";
     private static final String QUANTIZATION_MODE_COLOR_STRING = "Farbwerte";
 
-    /** key for SharedPreferences */
-    private static final String KEY_QUANTIZATION_MODE = "quantization_mode";
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         ButterKnife.inject(this);
-
-        mContext = this;
 
         mOpenCvCameraView.setCvCameraViewListener(this);
         //Log.w(TAG, "res list: " + mOpenCvCameraView.getResolutionList());
@@ -74,8 +65,6 @@ public class MainActivity extends AppCompatActivity implements CameraBridgeViewB
         super.onResume();
         //init OpenCV
         OpenCVLoader.initAsync(OpenCVLoader.OPENCV_VERSION_2_4_9, this, mLoaderCallback);
-        //get the quantization mode
-        quantizationMode = SharedPrefsHandler.getInstance(this).loadIntSettings(KEY_QUANTIZATION_MODE);
     }
 
     /**
@@ -231,8 +220,6 @@ public class MainActivity extends AppCompatActivity implements CameraBridgeViewB
         builder.setTitle(getString(R.string.quantization_list_title));
         builder.setSingleChoiceItems(choices, quantizationMode, new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int item) {
-                //save the chosen quantization mode
-                SharedPrefsHandler.getInstance(mContext).saveIntSettings(KEY_QUANTIZATION_MODE, item);
                 quantizationMode = item;
             }
         });
