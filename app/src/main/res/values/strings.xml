@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">ICT</string>
+    <string name="app_name">QuantiPic</string>
 
     <!-- Preference titles -->
     <string name="quantization_list_title">Quantisierungsverfahren</string>
