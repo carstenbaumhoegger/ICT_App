@@ -148,13 +148,6 @@ public class MainActivity extends AppCompatActivity implements CameraBridgeViewB
         return pInputFrame.rgba();
     }
 
-    // currently not used
-    public double reduceVal(double val) {
-        if (val < 64) return 0;
-        if (val < 128) return 64;
-        return 255;
-    }
-
     // ensure that the values stays in the rgb rang (0..255)
     public long truncate(long val) {
         if(val < 0 ) return 0;
@@ -219,7 +212,7 @@ public class MainActivity extends AppCompatActivity implements CameraBridgeViewB
     }
 
     /**
-     * saves an Image to external storage
+     * saves an image to external storage
      * @param pMat Mat to save
      * @return saving succeeded or failed
      */

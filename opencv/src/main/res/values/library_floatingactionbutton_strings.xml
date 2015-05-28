@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="define_floatingactionbutton">year;owner</string>
+    <!-- Author section -->
+    <string name="library_floatingactionbutton_author">Jerzy Chalupski</string>
+    <string name="library_floatingactionbutton_authorWebsite">https://lab.getbase.com/</string>
+    <!-- Library section -->
+    <string name="library_floatingactionbutton_libraryName">Floating Action Button</string>
+    <string name="library_floatingactionbutton_libraryDescription">Floating Action Button for Android based on Material Design specification </string>
+    <string name="library_floatingactionbutton_libraryWebsite"></string>
+    <string name="library_floatingactionbutton_libraryVersion">1.9.0</string>
+    <!-- OpenSource section -->
+    <string name="library_floatingactionbutton_isOpenSource">true</string>
+    <string name="library_floatingactionbutton_repositoryLink">https://github.com/futuresimple/android-floating-action-button</string>
+    <!-- ClassPath for autoDetect section -->
+    <string name="library_floatingactionbutton_classPath"></string>
+    <!-- License section -->
+    <string name="library_floatingactionbutton_licenseId">apache_2_0</string>
+    <!-- Custom variables section -->
+    <!-- Custom variables section -->
+    <string name="library_floatingactionbutton_owner">Jerzy Chalupski</string>
+    <string name="library_floatingactionbutton_year">2014</string>
+</resources>
+
