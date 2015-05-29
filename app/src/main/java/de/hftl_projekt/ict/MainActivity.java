@@ -48,7 +48,6 @@ public class MainActivity extends AppCompatActivity implements CameraBridgeViewB
 
     /** current Mat shown by screen */
     private Mat mCurrentMat;
-    private Mat test;
 
     private static final int QUANTIZATION_MODE_NONE = 0;
     private static final int QUANTIZATION_MODE_BRIGHTNESS = 1;
@@ -125,7 +124,6 @@ public class MainActivity extends AppCompatActivity implements CameraBridgeViewB
     public void onCameraViewStarted(int width, int height) {
         Log.w(TAG, "Camera res: " + width + " * " + height);
         Log.w(TAG, "onCameraViewStarted");
-        test = new Mat(width/4, height/4, CvType.CV_8UC4);
     }
 
     @Override
@@ -151,69 +149,50 @@ public class MainActivity extends AppCompatActivity implements CameraBridgeViewB
                 //just return camera picture if no quantization is chosen
                 return pInputFrame.rgba();
             case QUANTIZATION_MODE_BRIGHTNESS:
-                return changeBrightness(pInputFrame.rgba(), 1.4); // values which makes sense are around 0.5 to 1.5 (the higher the number, the brighter the picture will be)
+                return changeBrightness(pInputFrame.rgba(), 2.2, 30);
             case QUANTIZATION_MODE_COLOR:
-                return reduceColors(pInputFrame.rgba(), 192);
+                // binary color quantization
+                return reduceColors(pInputFrame.rgba());
         }
         return pInputFrame.rgba();
     }
 
-    // ensure that the values stays in the rgb rang (0..255)
-    public double truncate(double val) {
-        if(val < 0.0 ) return 0.0;
-        if(val > 255.0) return 255.0;
-        return val;
-    }
-
-    public Mat changeBrightness(Mat image, double modifier) {
-
-        int nl = image.rows();
-        int nc = image.cols();// * image.channels();
-
-        for (int j = 0; j < nl; j++) {
-            for (int i = 0; i < nc; i++) {
-                double[] pixel = image.get(j, i);
-                pixel[0] = truncate(pixel[0] * modifier);
-                pixel[1] = truncate(pixel[1] * modifier);
-                pixel[2] = truncate(pixel[2] * modifier);
-                image.put(j, i, pixel);
-            }
-        }
-
+    /**
+     * changes the brightness of the input matrix (image) and uses the given alpha/beta values
+     * @param image input matrix
+     * @param alpha value
+     * @param beta value
+     * @return modified input matrix
+     */
+    public Mat changeBrightness(Mat image, double alpha, double beta) {
+        // use native OpenCV function to convert the image with the specified alpha and beta values
+        // rType (secondParameter) defines the type of the output matrix,
+        // if the number is blow 0, the output matrix will be the same type as the input matrix
+        image.convertTo(image, -1, alpha, beta);
         return image;
     }
 
-    public Mat reduceColors(Mat image, int div) {
-        Mat test = new Mat();
-        Imgproc.cvtColor(image, image, Imgproc.COLOR_RGBA2RGB);
+    /**
+     * method to reduce the color (quantize) the given matrix (image)
+     * @param image input matrix
+     * @return modified input matrix
+     */
+    public Mat reduceColors(Mat image) {
 
-        List<Mat> channels = new ArrayList<Mat>();
+        List<Mat> channels = new ArrayList<Mat>(); // create new list of matrixes (for the different channel (R, G, B)
+
         for(int i = 0; i < image.channels(); i++) {
-            Mat channel = new Mat();
+            Mat channel = new Mat(); // fill array with a matrix for each channel
             channels.add(channel);
         }
-        Core.split(image, channels);
-        
-        /*
-        int nl = image.rows();
-        int nc = image.cols();// * image.channels();
+        Core.split(image, channels); // split the image into the different channels
 
-        for (int j = 0; j < nl; j++) {
-            for (int i = 0; i < nc; i++) {
-                double[] pixel = image.get(j, i);
-                pixel[0] = pixel[0] / div * div + div / 2;
-                pixel[1] = pixel[1] / div * div + div / 2;
-                pixel[2] = pixel[2] / div * div + div / 2;
-                image.put(j, i, pixel);
-            }
-        }
-
-        return image;*/
-
+        // process each channel individually
         for(Mat c : channels) {
             Mat kernel = Imgproc.getStructuringElement(Imgproc.MORPH_ELLIPSE, new Size(5,5));
             Mat temp = new Mat();
 
+            // scale the image down to a lower resoultion and use it as a mask for a better performance
             Imgproc.resize(c, temp, new Size(c.cols() / 4, c.rows() / 4));
             Imgproc.morphologyEx(temp, temp, Imgproc.MORPH_CLOSE, kernel);
             Imgproc.resize(temp, temp, new Size(c.cols(), c.rows()));
@@ -221,10 +200,11 @@ public class MainActivity extends AppCompatActivity implements CameraBridgeViewB
             Core.divide(c, temp, temp, 1, CvType.CV_32F); // temp will now have type CV_32F
             Core.normalize(temp, c, 0, 255, Core.NORM_MINMAX, CvType.CV_8U);
 
+            // binary quantization (set threshold so each color (R, G, B) can have the value (0 or 255) )
             Imgproc.threshold(c, c, 0, 255,
                     Imgproc.THRESH_BINARY_INV + Imgproc.THRESH_OTSU);
         }
-        Core.merge(channels, image);
+        Core.merge(channels, image); // put the channel back together
         return image;
     }
 
