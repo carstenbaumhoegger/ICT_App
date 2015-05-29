@@ -17,12 +17,20 @@ import org.opencv.android.CameraBridgeViewBase;
 import org.opencv.android.JavaCameraView;
 import org.opencv.android.LoaderCallbackInterface;
 import org.opencv.android.OpenCVLoader;
+import org.opencv.core.Core;
+import org.opencv.core.CvType;
 import org.opencv.core.Mat;
+import org.opencv.core.Size;
+import org.opencv.core.TermCriteria;
 import org.opencv.highgui.Highgui;
+import org.opencv.imgproc.Imgproc;
+import org.opencv.utils.Converters;
 
 import java.io.File;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 import butterknife.ButterKnife;
 import butterknife.InjectView;
@@ -40,6 +48,7 @@ public class MainActivity extends AppCompatActivity implements CameraBridgeViewB
 
     /** current Mat shown by screen */
     private Mat mCurrentMat;
+    private Mat test;
 
     private static final int QUANTIZATION_MODE_NONE = 0;
     private static final int QUANTIZATION_MODE_BRIGHTNESS = 1;
@@ -116,6 +125,7 @@ public class MainActivity extends AppCompatActivity implements CameraBridgeViewB
     public void onCameraViewStarted(int width, int height) {
         Log.w(TAG, "Camera res: " + width + " * " + height);
         Log.w(TAG, "onCameraViewStarted");
+        test = new Mat(width/4, height/4, CvType.CV_8UC4);
     }
 
     @Override
@@ -141,7 +151,7 @@ public class MainActivity extends AppCompatActivity implements CameraBridgeViewB
                 //just return camera picture if no quantization is chosen
                 return pInputFrame.rgba();
             case QUANTIZATION_MODE_BRIGHTNESS:
-                return changeBrightness(pInputFrame.rgba(), 0.9); // values which makes sense are around 0.5 to 1.5 (the higher the number, the brighter the picture will be)
+                return changeBrightness(pInputFrame.rgba(), 1.4); // values which makes sense are around 0.5 to 1.5 (the higher the number, the brighter the picture will be)
             case QUANTIZATION_MODE_COLOR:
                 return reduceColors(pInputFrame.rgba(), 192);
         }
@@ -149,9 +159,9 @@ public class MainActivity extends AppCompatActivity implements CameraBridgeViewB
     }
 
     // ensure that the values stays in the rgb rang (0..255)
-    public long truncate(long val) {
-        if(val < 0 ) return 0;
-        if(val > 255) return 255;
+    public double truncate(double val) {
+        if(val < 0.0 ) return 0.0;
+        if(val > 255.0) return 255.0;
         return val;
     }
 
@@ -160,13 +170,12 @@ public class MainActivity extends AppCompatActivity implements CameraBridgeViewB
         int nl = image.rows();
         int nc = image.cols();// * image.channels();
 
-
         for (int j = 0; j < nl; j++) {
             for (int i = 0; i < nc; i++) {
                 double[] pixel = image.get(j, i);
-                pixel[0] = truncate(Math.round(pixel[0] * modifier));
-                pixel[1] = truncate(Math.round(pixel[1] * modifier));
-                pixel[2] = truncate(Math.round(pixel[2] * modifier));
+                pixel[0] = truncate(pixel[0] * modifier);
+                pixel[1] = truncate(pixel[1] * modifier);
+                pixel[2] = truncate(pixel[2] * modifier);
                 image.put(j, i, pixel);
             }
         }
@@ -174,11 +183,20 @@ public class MainActivity extends AppCompatActivity implements CameraBridgeViewB
         return image;
     }
 
-    public Mat reduceColors(Mat image, double div) {
+    public Mat reduceColors(Mat image, int div) {
+        Mat test = new Mat();
+        Imgproc.cvtColor(image, image, Imgproc.COLOR_RGBA2RGB);
 
+        List<Mat> channels = new ArrayList<Mat>();
+        for(int i = 0; i < image.channels(); i++) {
+            Mat channel = new Mat();
+            channels.add(channel);
+        }
+        Core.split(image, channels);
+        
+        /*
         int nl = image.rows();
         int nc = image.cols();// * image.channels();
-
 
         for (int j = 0; j < nl; j++) {
             for (int i = 0; i < nc; i++) {
@@ -190,6 +208,23 @@ public class MainActivity extends AppCompatActivity implements CameraBridgeViewB
             }
         }
 
+        return image;*/
+
+        for(Mat c : channels) {
+            Mat kernel = Imgproc.getStructuringElement(Imgproc.MORPH_ELLIPSE, new Size(5,5));
+            Mat temp = new Mat();
+
+            Imgproc.resize(c, temp, new Size(c.cols() / 4, c.rows() / 4));
+            Imgproc.morphologyEx(temp, temp, Imgproc.MORPH_CLOSE, kernel);
+            Imgproc.resize(temp, temp, new Size(c.cols(), c.rows()));
+
+            Core.divide(c, temp, temp, 1, CvType.CV_32F); // temp will now have type CV_32F
+            Core.normalize(temp, c, 0, 255, Core.NORM_MINMAX, CvType.CV_8U);
+
+            Imgproc.threshold(c, c, 0, 255,
+                    Imgproc.THRESH_BINARY_INV + Imgproc.THRESH_OTSU);
+        }
+        Core.merge(channels, image);
         return image;
     }
 
