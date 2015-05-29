@@ -21,10 +21,8 @@ import org.opencv.core.Core;
 import org.opencv.core.CvType;
 import org.opencv.core.Mat;
 import org.opencv.core.Size;
-import org.opencv.core.TermCriteria;
 import org.opencv.highgui.Highgui;
 import org.opencv.imgproc.Imgproc;
-import org.opencv.utils.Converters;
 
 import java.io.File;
 import java.text.SimpleDateFormat;
@@ -99,7 +97,6 @@ public class MainActivity extends AppCompatActivity implements CameraBridgeViewB
      */
     @OnClick(R.id.btn_show_app_info) void showAppInfo() {
         //use AboutLibraries to display used libraries
-        //Todo list OpenCV, FAB
         new LibsBuilder()
                 //Pass the fields of your application to the lib so it can find all external lib information
                 .withFields(R.string.class.getFields())
@@ -179,7 +176,7 @@ public class MainActivity extends AppCompatActivity implements CameraBridgeViewB
      */
     public Mat reduceColors(Mat image) {
 
-        List<Mat> channels = new ArrayList<Mat>(); // create new list of matrixes (for the different channel (R, G, B)
+        List<Mat> channels = new ArrayList<>(); // create new list of matrixes (for the different channel (R, G, B)
 
         for(int i = 0; i < image.channels(); i++) {
             Mat channel = new Mat(); // fill array with a matrix for each channel

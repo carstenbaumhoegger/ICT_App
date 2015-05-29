@@ -1,9 +1,16 @@
 apply plugin: 'com.android.application'
 
 android {
+    signingConfigs {
+        releaseConfig {
+            keyAlias 'ICTAppKey'
+            keyPassword 'WiudVKzq#tJm'
+            storeFile file('C:/Users/Carsten/Google Drive/ICT_App/ict_app_keystore.jks')
+            storePassword 'Y5:gIFR{0i5W'
+        }
+    }
     compileSdkVersion 22
     buildToolsVersion "22.0.1"
-
     defaultConfig {
         applicationId "de.hftl_projekt.ict"
         minSdkVersion 16
@@ -15,12 +22,13 @@ android {
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            signingConfig signingConfigs.releaseConfig
         }
     }
 }
 
 dependencies {
-    compile fileTree(dir: 'libs', include: ['*.jar'])
+    compile fileTree(include: ['*.jar'], dir: 'libs')
     compile 'com.android.support:appcompat-v7:22.1.1'
     //OpenCV
     compile project(':opencv')
