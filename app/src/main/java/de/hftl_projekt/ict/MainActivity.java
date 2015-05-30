@@ -186,20 +186,9 @@ public class MainActivity extends AppCompatActivity implements CameraBridgeViewB
 
         // process each channel individually
         for(Mat c : channels) {
-            Mat kernel = Imgproc.getStructuringElement(Imgproc.MORPH_ELLIPSE, new Size(5,5));
-            Mat temp = new Mat();
-
-            // scale the image down to a lower resoultion and use it as a mask for a better performance
-            Imgproc.resize(c, temp, new Size(c.cols() / 4, c.rows() / 4));
-            Imgproc.morphologyEx(temp, temp, Imgproc.MORPH_CLOSE, kernel);
-            Imgproc.resize(temp, temp, new Size(c.cols(), c.rows()));
-
-            Core.divide(c, temp, temp, 1, CvType.CV_32F); // temp will now have type CV_32F
-            Core.normalize(temp, c, 0, 255, Core.NORM_MINMAX, CvType.CV_8U);
-
             // binary quantization (set threshold so each color (R, G, B) can have the value (0 or 255) )
-            Imgproc.threshold(c, c, 0, 255,
-                    Imgproc.THRESH_BINARY_INV + Imgproc.THRESH_OTSU);
+            // and using the Otsu algorithm to optimize the quantization
+            Imgproc.threshold(c, c, 0, 255, Imgproc.THRESH_BINARY + Imgproc.THRESH_OTSU);
         }
         Core.merge(channels, image); // put the channel back together
         return image;
