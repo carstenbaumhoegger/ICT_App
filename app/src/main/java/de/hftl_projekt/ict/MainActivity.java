@@ -188,7 +188,7 @@ public class MainActivity extends AppCompatActivity implements CameraBridgeViewB
         for(Mat c : channels) {
             // binary quantization (set threshold so each color (R, G, B) can have the value (0 or 255) )
             // and using the Otsu algorithm to optimize the quantization
-            Imgproc.threshold(c, c, 0, 255, Imgproc.THRESH_BINARY + Imgproc.THRESH_OTSU);
+            Imgproc.threshold(c, c, 0, 255, Imgproc.THRESH_BINARY_INV + Imgproc.THRESH_OTSU);
         }
         Core.merge(channels, image); // put the channel back together
         return image;
@@ -221,6 +221,8 @@ public class MainActivity extends AppCompatActivity implements CameraBridgeViewB
     public boolean saveImage(Mat pMat) {
         File path = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES);
         Log.d(TAG, "path: " + path);
+        //Mat test = new Mat();
+        Imgproc.cvtColor(pMat, pMat, Imgproc.COLOR_RGBA2BGR);
 
         //build the filename
         String filename = getString(R.string.app_name) + "_";
