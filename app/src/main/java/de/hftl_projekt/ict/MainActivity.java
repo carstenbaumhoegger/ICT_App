@@ -221,7 +221,7 @@ public class MainActivity extends AppCompatActivity implements CameraBridgeViewB
     public boolean saveImage(Mat pMat) {
         File path = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES);
         Log.d(TAG, "path: " + path);
-        //Mat test = new Mat();
+        // convert the colorspace (opencv doesn't handle rgba correct)
         Imgproc.cvtColor(pMat, pMat, Imgproc.COLOR_RGBA2BGR);
 
         //build the filename
