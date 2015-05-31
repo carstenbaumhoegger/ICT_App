@@ -5,7 +5,7 @@ android {
         releaseConfig {
             keyAlias 'ICTAppKey'
             keyPassword 'WiudVKzq#tJm'
-            storeFile file('J:/Downloads/ict_app_keystore.jks')
+            storeFile file('C:\\Users\\Carsten\\Google Drive\\ICT_App\\ict_app_keystore.jks')
             storePassword 'Y5:gIFR{0i5W'
         }
     }

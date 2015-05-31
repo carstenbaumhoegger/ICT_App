@@ -18,9 +18,7 @@ import org.opencv.android.JavaCameraView;
 import org.opencv.android.LoaderCallbackInterface;
 import org.opencv.android.OpenCVLoader;
 import org.opencv.core.Core;
-import org.opencv.core.CvType;
 import org.opencv.core.Mat;
-import org.opencv.core.Size;
 import org.opencv.highgui.Highgui;
 import org.opencv.imgproc.Imgproc;
 
@@ -207,8 +205,6 @@ public class MainActivity extends AppCompatActivity implements CameraBridgeViewB
                 quantizationMode = item;
             }
         });
-        builder.setPositiveButton("Auswählen", null);
-        builder.setNegativeButton("Abbrechen", null);
         builder.show();
     }
 
