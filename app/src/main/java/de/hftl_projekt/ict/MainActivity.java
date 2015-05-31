@@ -100,6 +100,7 @@ public class MainActivity extends AppCompatActivity implements CameraBridgeViewB
                 .withFields(R.string.class.getFields())
                 //provide a style (optional) (LIGHT, DARK, LIGHT_DARK_TOOLBAR)
                 .withActivityStyle(Libs.ActivityStyle.LIGHT)
+                .withActivityTitle("Über diese App")
                 //show the app license
                 .withLicenseShown(true)
                 .start(this);

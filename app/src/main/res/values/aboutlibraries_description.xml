@@ -5,7 +5,8 @@
     <string name="aboutLibraries_description_showVersion">true</string>
     <string name="aboutLibraries_description_text">
         <![CDATA[
-            Android App, entwickelt als PVL im Modul ICT.<br />
+            Android App, entwickelt als PVL im Modul ICT<br />
+            <br />
             Mitwirkende: <br />
             <b>Karolin Pflug, Kathrin Krumbach, Hava Yildiz, Jens K&uuml;per, Kurosh d\'Alba, Carsten Baumh&ouml;gger</b>
         </b>]]>
