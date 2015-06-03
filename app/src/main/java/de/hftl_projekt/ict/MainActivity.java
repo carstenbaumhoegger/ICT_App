@@ -49,16 +49,19 @@ public class MainActivity extends AppCompatActivity implements CameraBridgeViewB
     private static final int QUANTIZATION_MODE_BRIGHTNESS = 1;
     private static final int QUANTIZATION_MODE_COLOR = 2;
 
+    // define lables for the quantisation dialog options
     private static final String QUANTIZATION_MODE_NONE_STRING = "Keins";
     private static final String QUANTIZATION_MODE_BRIGHTNESS_STRING = "Helligkeit";
     private static final String QUANTIZATION_MODE_COLOR_STRING = "Farbwerte";
 
+    // gets called on startup
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        // enable butterknife for this activity
         ButterKnife.inject(this);
-
+        // define that the cameraviewlistener is implemented in this class
         mOpenCvCameraView.setCvCameraViewListener(this);
     }
 
@@ -116,6 +119,7 @@ public class MainActivity extends AppCompatActivity implements CameraBridgeViewB
         Log.d(TAG, "onDestroy");
     }
 
+    // this method will be executed after the cameraview gadget has been successfully initialised
     @Override
     public void onCameraViewStarted(int width, int height) {
         Log.w(TAG, "Camera res: " + width + " * " + height);
@@ -127,6 +131,7 @@ public class MainActivity extends AppCompatActivity implements CameraBridgeViewB
         Log.w(TAG, "onCameraViewStopped");
     }
 
+    // this method gets called everytime the camera has captured a new frame
     @Override
     public Mat onCameraFrame(CameraBridgeViewBase.CvCameraViewFrame inputFrame) {
         Log.d(TAG, "camera frame");
@@ -197,15 +202,20 @@ public class MainActivity extends AppCompatActivity implements CameraBridgeViewB
      * builds the dialog to chose QuantizationMode
      */
     private void buildQuantizationModeDialog() {
+        // init dialog for quantisation modes
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        // load lables
         final String[] choices = {QUANTIZATION_MODE_NONE_STRING, QUANTIZATION_MODE_BRIGHTNESS_STRING,
                 QUANTIZATION_MODE_COLOR_STRING};
+        // define title
         builder.setTitle(getString(R.string.quantization_list_title));
+        // add items
         builder.setSingleChoiceItems(choices, quantizationMode, new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int item) {
                 quantizationMode = item;
             }
         });
+        // display dialog
         builder.show();
     }
 
@@ -217,21 +227,25 @@ public class MainActivity extends AppCompatActivity implements CameraBridgeViewB
     @SuppressLint("SimpleDateFormat")
     public boolean saveImage(Mat pMat) {
         File path = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES);
+        // create directory if it does not exist
+        path.mkdirs();
         Log.d(TAG, "path: " + path);
         // convert the colorspace (opencv doesn't handle rgba correct)
         Imgproc.cvtColor(pMat, pMat, Imgproc.COLOR_RGBA2BGR);
 
         //build the filename
         String filename = getString(R.string.app_name) + "_";
+        // generate timestamp
         SimpleDateFormat fmt = new SimpleDateFormat("yyyy-MM-dd_HH-mm-ss");
         Date date = new Date(System.currentTimeMillis());
         String dateString = fmt.format(date);
         filename += dateString;
         filename += ".png";
 
+        // open file
         File file = new File(path, filename);
         filename = file.toString();
-        //try to write the image to storage
+        //try to write the image to the sdcard
         return Highgui.imwrite(filename, pMat);
     }
 
@@ -245,6 +259,7 @@ public class MainActivity extends AppCompatActivity implements CameraBridgeViewB
                 case LoaderCallbackInterface.SUCCESS:
                 {
                     Log.i(TAG, "OpenCV loaded successfully");
+                    // start camera view
                     mOpenCvCameraView.enableView();
                 } break;
                 default:
