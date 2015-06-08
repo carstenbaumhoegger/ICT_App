@@ -217,6 +217,8 @@ public class MainActivity extends AppCompatActivity implements CameraBridgeViewB
     @SuppressLint("SimpleDateFormat")
     public boolean saveImage(Mat pMat) {
         File path = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES);
+        //create directory if it doesn't exist
+        path.mkdirs();
         Log.d(TAG, "path: " + path);
         // convert the colorspace (opencv doesn't handle rgba correct)
         Imgproc.cvtColor(pMat, pMat, Imgproc.COLOR_RGBA2BGR);
