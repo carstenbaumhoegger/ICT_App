@@ -44,7 +44,7 @@ public class MainActivity extends AppCompatActivity implements CameraBridgeViewB
 
     /** current Mat shown by screen */
     private Mat mCurrentMat;
-
+    private ArrayList<Mat> channels = new ArrayList<>();
     private static final int QUANTIZATION_MODE_NONE = 0;
     private static final int QUANTIZATION_MODE_BRIGHTNESS = 1;
     private static final int QUANTIZATION_MODE_COLOR = 2;
@@ -174,20 +174,21 @@ public class MainActivity extends AppCompatActivity implements CameraBridgeViewB
      * @return modified input matrix
      */
     public Mat reduceColors(Mat image) {
+        if(channels.size() == 0) {
+            for (int i = 0; i < image.channels(); i++) {
+                Mat channel = new Mat(); // fill array with a matrix for each channel
+                channels.add(channel);
+            }
 
-        List<Mat> channels = new ArrayList<>(); // create new list of matrixes (for the different channel (R, G, B)
-
-        for(int i = 0; i < image.channels(); i++) {
-            Mat channel = new Mat(); // fill array with a matrix for each channel
-            channels.add(channel);
         }
-        Core.split(image, channels); // split the image into the different channels
-
+        int i = 0;
         // process each channel individually
         for(Mat c : channels) {
+            Core.extractChannel(image, c, i);
             // binary quantization (set threshold so each color (R, G, B) can have the value (0 or 255) )
             // and using the Otsu algorithm to optimize the quantization
             Imgproc.threshold(c, c, 0, 255, Imgproc.THRESH_BINARY_INV + Imgproc.THRESH_OTSU);
+            i++;
         }
         Core.merge(channels, image); // put the channel back together
         return image;
